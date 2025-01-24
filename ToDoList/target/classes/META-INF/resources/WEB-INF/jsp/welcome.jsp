@@ -1,12 +1,11 @@
 <html>
 	<head>
-		<title> MY First Web Page </title>
+		<title>Welcome Page</title>
 	</head>
 	<body>
-	<div class="container">
+		<div class="container">
 			<h1>Welcome ${name}</h1>
-			<a href="list-todo">Manage</a> your todos
+			<a href="list-todos">Manage</a> your todos
 		</div>
-	
 	</body>
 </html>
