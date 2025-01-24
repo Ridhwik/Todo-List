@@ -1,19 +1,15 @@
-package com.project.ToDoList.Login;
+package com.project.ToDoList.login;
 
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationService {
 	
-	
-	public boolean authenticate(String user , String password){
+	public boolean authenticate(String username, String password) {
 		
-		boolean username = user.equalsIgnoreCase("Syfer");
-		boolean pass = password.equalsIgnoreCase("Ramzi");
+		boolean isValidUserName = username.equalsIgnoreCase("Syfer");
+		boolean isValidPassword = password.equalsIgnoreCase("ramzi");
 		
-		return username && pass; 
-		
-		
+		return isValidUserName && isValidPassword;
 	}
-
 }

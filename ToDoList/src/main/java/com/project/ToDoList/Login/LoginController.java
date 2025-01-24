@@ -1,6 +1,5 @@
-package com.project.ToDoList.Login;
+package com.project.ToDoList.login;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,41 +10,35 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Controller
 @SessionAttributes("name")
 public class LoginController {
+
+	private AuthenticationService authenticationService;
 	
-	@Autowired
-	private AuthenticationService service;
-	
-	
-	@RequestMapping(value = "login" , method = RequestMethod.GET)
-	public String loginPage(){
-		
-		
-		return "LoginJSP";
-		
+	public LoginController(AuthenticationService authenticationService) {
+		super();
+		this.authenticationService = authenticationService;
 	}
-	
-	@RequestMapping(value = "login" , method = RequestMethod.POST)
-	public String loginPage(@RequestParam String name ,@RequestParam String password , ModelMap model){
+
+	@RequestMapping(value="login",method = RequestMethod.GET)
+	public String gotoLoginPage() {
+		return "login";
+	}
+
+	@RequestMapping(value="login",method = RequestMethod.POST)
+	//login?name=Ranga RequestParam
+	public String gotoWelcomePage(@RequestParam String name, 
+			@RequestParam String password, ModelMap model) {
 		
+		if(authenticationService.authenticate(name, password)) {
 		
-		if(service.authenticate(name, password)) {
-			
 			model.put("name", name);
-			
+			//Authentication 
+			//name - in28minutes
+			//password - dummy
 			
 			return "welcome";
 		}
 		
-		else {
-			
-			model.put("errormessage", "Invalid Credentials!!!!");
-			return "LoginJSP";
-		}
-		
+		model.put("errorMessage", "Invalid Credentials! Please try again.");
+		return "login";
 	}
-	
-	
-	
-	
-
 }
