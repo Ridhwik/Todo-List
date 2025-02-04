@@ -3,6 +3,8 @@ package com.project.ToDoList.todo;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -27,7 +29,8 @@ public class TodoController {
 	
 	@RequestMapping("list-todos")
 	public String listAllTodos(ModelMap model) {
-		List<Todo> todos = todoService.findByUsername("in28minutes");
+		String username = getLoggedIn(model);
+		List<Todo> todos = todoService.findByUsername(username);
 		model.addAttribute("todos", todos);
 		
 		return "listTodos";
@@ -36,7 +39,7 @@ public class TodoController {
 	//GET, POST
 	@RequestMapping(value="add-todo", method = RequestMethod.GET)
 	public String showNewTodoPage(ModelMap model) {
-		String username = (String)model.get("name");
+		String username = getLoggedIn(model);
 		Todo todo = new Todo(0, username, "", LocalDate.now().plusYears(1), false);
 		model.put("todo", todo);
 		return "todo";
@@ -49,9 +52,9 @@ public class TodoController {
 			return "todo";
 		}
 		
-		String username = (String)model.get("name");
+		String username = getLoggedIn(model);
 		todoService.addTodo(username, todo.getDescription(), 
-				todo.getTargetDate(), false);
+				LocalDate.now().plusYears(1), false);
 		return "redirect:list-todos";
 	}
 
@@ -65,13 +68,12 @@ public class TodoController {
 	}
 
 	@RequestMapping(value="update-todo", method = RequestMethod.GET)
-	public String showUpdateTodoPage(@RequestParam int id, ModelMap model ) {
+	public String showUpdateTodoPage(@RequestParam int id, ModelMap model) {
 		Todo todo = todoService.findById(id);
 		model.addAttribute("todo", todo);
 		return "todo";
 	}
-	
-	
+
 	@RequestMapping(value="update-todo", method = RequestMethod.POST)
 	public String updateTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
 		
@@ -79,10 +81,16 @@ public class TodoController {
 			return "todo";
 		}
 		
-		String username = (String)model.get("name");
+		String username = getLoggedIn(model);
 		todo.setUsername(username);
 		todoService.updateTodo(todo);
 		return "redirect:list-todos";
+	}
+
+	private String getLoggedIn(ModelMap model) {
+		Authentication authentication = 
+				SecurityContextHolder.getContext().getAuthentication();
+		return authentication.getName();
 	}
 
 }
